@@ -5,22 +5,25 @@ export default function TimerChanllenge({ title, targetTime }) {
   const timer = useRef()
   const dialog = useRef()
 
-  const [timerStarted, setTimerStarted] = useState(false)
-  const [timerExpired, setTimerExpired] = useState(false)
+  const [timeRemaining, setTimeRemaining] = useState(targetTime * 1000)
+
+  const timerIsActiv = timeRemaining > 0 && timeRemaining < targetTime * 1000
+
+  if (timeRemaining <= 0) {
+    clearInterval(timer.current)
+    setTimeRemaining(targetTime * 1000)
+    dialog.current.open()
+  }
 
   function handleTimerStart() {
-    timer.current = setTimeout(() => {
-      setTimerExpired(true)
-      //dialog.current.showModal()
-      dialog.current.open()
-    }, targetTime * 1000)
-
-    setTimerStarted(true)
+    timer.current = setInterval(() => {
+      setTimeRemaining((prevTimeRemaining) => prevTimeRemaining - 10)
+    }, 10)
   }
 
   function handleTimerStop() {
-    clearTimeout(timer.current)
-    setTimerStarted(false)
+    clearInterval(timer.current)
+    dialog.current.open()
   }
 
   return (
@@ -28,17 +31,17 @@ export default function TimerChanllenge({ title, targetTime }) {
       <ResultModal ref={dialog} result='lost' targetTime={targetTime} />
       <section className='challenge'>
         <h2>{title}</h2>
-        {timerExpired && <p>You Lost</p>}
+        {/* {timerExpired && <p>You Lost</p>} */}
         <p className='challenge-time'>
           {targetTime} second{targetTime > 1 ? 's' : ''}
         </p>
         <p>
-          <button onClick={timerStarted ? handleTimerStop : handleTimerStart}>
-            {timerStarted ? 'Stop' : 'Start'} challenge
+          <button onClick={timerIsActiv ? handleTimerStop : handleTimerStart}>
+            {timerIsActiv ? 'Stop' : 'Start'} challenge
           </button>
         </p>
         <p className=''>
-          {timerStarted ? 'Timer is runing...' : 'Timer inactive'}
+          {timerIsActiv ? 'Timer is runing...' : 'Timer inactive'}
         </p>
       </section>
     </>
