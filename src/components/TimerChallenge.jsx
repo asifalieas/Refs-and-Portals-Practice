@@ -11,7 +11,7 @@ export default function TimerChanllenge({ title, targetTime }) {
 
   if (timeRemaining <= 0) {
     clearInterval(timer.current)
-    setTimeRemaining(targetTime * 1000)
+    //setTimeRemaining(targetTime * 1000)
     dialog.current.open()
   }
 
@@ -26,9 +26,19 @@ export default function TimerChanllenge({ title, targetTime }) {
     dialog.current.open()
   }
 
+  function handleRestart() {
+    setTimeRemaining(targetTime * 1000)
+  }
+
   return (
     <>
-      <ResultModal ref={dialog} result='lost' targetTime={targetTime} />
+      <ResultModal
+        ref={dialog}
+        result='lost'
+        targetTime={targetTime}
+        timeRemaining={timeRemaining}
+        onRestart={handleRestart}
+      />
       <section className='challenge'>
         <h2>{title}</h2>
         {/* {timerExpired && <p>You Lost</p>} */}
